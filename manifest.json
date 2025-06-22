@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "🎵 SUNO Capture",
+  "version": "1.0",
+  "description": "下载SUNO音乐的Chrome插件 - 由SimbaLee开发",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage", "downloads", "tabs"],
+  "host_permissions": ["*://*.suno.com/*", "*://*.suno.ai/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.suno.com/*", "*://*.suno.ai/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

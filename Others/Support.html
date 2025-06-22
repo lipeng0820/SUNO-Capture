@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUNO Capture Support & Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .lang-switch-btn.active {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: #ffffff; /* text-white */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans antialiased">
+
+    <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Header with Title and Language Switcher -->
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-12">
+            <h1 class="text-4xl font-extrabold text-white mb-4 sm:mb-0">
+                <span data-lang="zh">🎵 SUNO Capture 使用说明</span>
+                <span data-lang="en" class="hidden">🎵 SUNO Capture Guide</span>
+            </h1>
+            <div class="flex items-center bg-gray-800 rounded-lg p-1 space-x-1">
+                <button data-target-lang="zh" class="lang-switch-btn px-4 py-2 text-sm font-semibold rounded-md transition-colors duration-200">中文</button>
+                <button data-target-lang="en" class="lang-switch-btn px-4 py-2 text-sm font-semibold rounded-md transition-colors duration-200">English</button>
+            </div>
+        </header>
+
+        <main class="space-y-16">
+
+            <!-- Section 1: Introduction -->
+            <section id="introduction">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2">
+                    <span data-lang="zh">1. 插件简介</span>
+                    <span data-lang="en" class="hidden">1. Plugin Introduction</span>
+                </h2>
+                <div class="space-y-4 text-lg leading-relaxed">
+                    <p>
+                        <span data-lang="zh">欢迎使用 <strong>SUNO Capture</strong>！这是一款专为 Suno AI (suno.com) 设计的 Chrome 浏览器插件，旨在帮助您轻松、快捷地下载您喜爱的 AI 音乐作品。无论您是想保存单首歌曲还是批量下载整个创作列表，SUNO Capture 都能提供无缝的体验。</span>
+                        <span data-lang="en" class="hidden">Welcome to <strong>SUNO Capture</strong>! This is a Chrome browser extension designed specifically for Suno AI (suno.com) to help you easily and quickly download your favorite AI-generated music. Whether you want to save a single track or batch download an entire creation list, SUNO Capture provides a seamless experience.</span>
+                    </p>
+                    <div>
+                        <h3 class="font-semibold text-teal-300 mb-2">
+                            <span data-lang="zh">主要功能：</span>
+                            <span data-lang="en" class="hidden">Key Features:</span>
+                        </h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>
+                                <span data-lang="zh"><strong>一键下载</strong>：在音乐播放页面直接添加 <code class="bg-gray-700 text-red-400 px-2 py-1 rounded">MP3</code> 和 <code class="bg-gray-700 text-red-400 px-2 py-1 rounded">WAV</code> 格式的下载按钮。</span>
+                                <span data-lang="en" class="hidden"><strong>One-Click Download</strong>: Directly adds <code class="bg-gray-700 text-red-400 px-2 py-1 rounded">MP3</code> and <code class="bg-gray-700 text-red-400 px-2 py-1 rounded">WAV</code> download buttons on the music playback page.</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh"><strong>批量下载</strong>：在您的创作列表页面，一键下载当前页面所有可见的音乐作品。</span>
+                                <span data-lang="en" class="hidden"><strong>Batch Download</strong>: On your creation list page, download all visible music tracks on the current page with a single click.</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh"><strong>直观的管理界面</strong>：通过插件弹窗，轻松查看下载历史、管理批量下载队列。</span>
+                                <span data-lang="en" class="hidden"><strong>Intuitive Management UI</strong>: Easily view download history and manage the batch download queue through the plugin popup.</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh"><strong>智能队列管理</strong>：支持批量下载任务的暂停、继续和清空，下载过程清晰可控。</span>
+                                <span data-lang="en" class="hidden"><strong>Smart Queue Management</strong>: Supports pausing, resuming, and clearing batch download tasks, making the process clear and controllable.</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh"><strong>状态实时更新</strong>：无论是页面上的提示，还是弹窗内的进度条，都能让您随时了解下载状态。</span>
+                                <span data-lang="en" class="hidden"><strong>Real-time Status Updates</strong>: Stay informed about the download status through on-page notifications and progress bars in the popup.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 2: How to Use -->
+            <section id="how-to-use">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2">
+                    <span data-lang="zh">2. 如何使用</span>
+                    <span data-lang="en" class="hidden">2. How to Use</span>
+                </h2>
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-teal-300 mb-3">
+                            <span data-lang="zh">第一步：安装插件</span>
+                            <span data-lang="en" class="hidden">Step 1: Install the Extension</span>
+                        </h3>
+                        <p class="leading-relaxed">
+                            <span data-lang="zh">从 Chrome 网上应用店安装 SUNO Capture 插件。</span>
+                            <span data-lang="en" class="hidden">Install the SUNO Capture extension from the Chrome Web Store.</span>
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-teal-300 mb-3">
+                            <span data-lang="zh">第二步：下载单首音乐</span>
+                            <span data-lang="en" class="hidden">Step 2: Download a Single Track</span>
+                        </h3>
+                        <ol class="list-decimal list-inside space-y-2 leading-relaxed">
+                            <li>
+                                <span data-lang="zh">打开任意一首 Suno 音乐的播放页面（例如 <code class="text-gray-400">https://suno.com/song/...</code>）。</span>
+                                <span data-lang="en" class="hidden">Open any Suno music playback page (e.g., <code class="text-gray-400">https://suno.com/song/...</code>).</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh">在页面加载完成后，您会看到在官方的播放按钮旁边，插件自动为您添加了 <strong class="text-yellow-300">[MP3]</strong> 和 <strong class="text-yellow-300">[WAV]</strong> 两个下载按钮。</span>
+                                <span data-lang="en" class="hidden">After the page loads, you will see that the extension has automatically added two download buttons, <strong class="text-yellow-300">[MP3]</strong> and <strong class="text-yellow-300">[WAV]</strong>, next to the official play button.</span>
+                            </li>
+                             <li>
+                                <span data-lang="zh">点击您需要的格式按钮，下载将自动开始。您会在页面左下角看到“开始下载”的提示。</span>
+                                <span data-lang="en" class="hidden">Click the button for your desired format, and the download will start automatically. You'll see a "Download started" notification at the bottom left of the page.</span>
+                            </li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-teal-300 mb-3">
+                            <span data-lang="zh">第三步：批量下载音乐</span>
+                            <span data-lang="en" class="hidden">Step 3: Batch Download Music</span>
+                        </h3>
+                        <ol class="list-decimal list-inside space-y-2 leading-relaxed">
+                            <li>
+                                <span data-lang="zh">打开您的 Suno 创作列表页面 (<code class="text-gray-400">https://suno.com/create</code>)。</span>
+                                <span data-lang="en" class="hidden">Navigate to your Suno creation list page (<code class="text-gray-400">https://suno.com/create</code>).</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh">插件会在页面右下角自动添加两个悬浮按钮：<strong class="text-yellow-300">[批量下载MP3]</strong> 和 <strong class="text-yellow-300">[批量下载WAV]</strong>。</span>
+                                <span data-lang="en" class="hidden">The extension will automatically add two floating buttons at the bottom right of the page: <strong class="text-yellow-300">[Batch Download MP3]</strong> and <strong class="text-yellow-300">[Batch Download WAV]</strong>.</span>
+                            </li>
+                             <li>
+                                <span data-lang="zh">点击任一按钮，插件将自动抓取当前页面上所有可见的音乐，并将它们添加到下载队列中。</span>
+                                <span data-lang-en class="hidden">Click either button, and the extension will automatically find all visible music tracks on the current page and add them to the download queue.</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh"><strong class="text-red-400">重要提示</strong>：批量下载功能仅对 <strong>当前页面可见</strong> 的歌曲生效。如果您想下载更多歌曲，请向下滚动页面或翻页后，再次点击批量下载按钮。</span>
+                                <span data-lang-en class="hidden"><strong class="text-red-400">Important Note</strong>: The batch download function only works for tracks that are <strong>currently visible on the page</strong>. If you want to download more songs, please scroll down or go to the next page and click the batch download button again.</span>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Popup UI -->
+            <section id="popup-ui">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2">
+                    <span data-lang="zh">3. 插件弹窗界面详解</span>
+                    <span data-lang="en" class="hidden">3. Plugin Popup UI Guide</span>
+                </h2>
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-teal-300 mb-3">
+                            <span data-lang="zh">"单作品下载" 标签页</span>
+                            <span data-lang="en" class="hidden">"Single Download" Tab</span>
+                        </h3>
+                        <p class="mb-2">
+                           <span data-lang="zh">此页面展示了您通过本插件发起的所有下载记录。</span>
+                           <span data-lang="en" class="hidden">This tab displays a history of all downloads initiated through the extension.</span>
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 leading-relaxed">
+                            <li>
+                                <span data-lang="zh"><strong>总进度条</strong>：显示所有下载任务的总体积和已完成的进度。</span>
+                                <span data-lang="en" class="hidden"><strong>Total Progress Bar</strong>: Shows the total size of all download tasks and the completed progress.</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh"><strong>下载列表</strong>：包含文件名、大小、状态（下载中、已完成、错误等）和操作按钮。</span>
+                                <span data-lang="en" class="hidden"><strong>Download List</strong>: Includes filename, size, status (downloading, completed, error, etc.), and action buttons.</span>
+                            </li>
+                            <li>
+                                <span data-lang="zh"><strong>全部删除</strong>：点击右上角的按钮，可以清空所有下载历史记录。</span>
+                                <span data-lang="en" class="hidden"><strong>Clear All</strong>: Click the button in the top-right corner to clear the entire download history.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-teal-300 mb-3">
+                            <span data-lang="zh">"批量下载" 标签页</span>
+                            <span data-lang="en" class="hidden">"Batch Download" Tab</span>
+                        </h3>
+                        <p class="mb-2">
+                           <span data-lang="zh">此页面用于管理您的批量下载任务。</span>
+                           <span data-lang="en" class="hidden">This tab is for managing your batch download tasks.</span>
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 leading-relaxed">
+                            <li>
+                                <span data-lang="zh"><strong>操作按钮</strong>：包括“下载所有MP3/WAV”、“暂停/继续”和“清空队列”。</span>
+                                <span data-lang="en" class="hidden"><strong>Action Buttons</strong>: Includes "Download All MP3/WAV", "Pause/Resume", and "Clear Queue".</span>
+                            </li>
+                             <li>
+                                <span data-lang="zh"><strong>等待下载队列</strong>：显示等待下载的音乐ID、格式、状态，并可移除单个未开始的任务。</span>
+                                <span data-lang="en" class="hidden"><strong>Waiting Queue</strong>: Shows the music UUID, format, status, and allows removing individual pending items.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 4: FAQ -->
+            <section id="faq">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2">
+                    <span data-lang="zh">4. 常见问题 (FAQ)</span>
+                    <span data-lang="en" class="hidden">4. Frequently Asked Questions (FAQ)</span>
+                </h2>
+                <dl class="space-y-6">
+                    <div>
+                        <dt class="font-semibold text-lg">
+                            <span data-lang="zh">Q1: 为什么我点击了 WAV 下载，却提示错误或下载失败？</span>
+                            <span data-lang="en" class="hidden">Q1: Why do I get an error or a failed download when I click to download a WAV file?</span>
+                        </dt>
+                        <dd class="mt-2 ml-4 text-gray-400 leading-relaxed">
+                            <span data-lang="zh"><strong>A:</strong> Suno 并非为所有歌曲都生成了 WAV 无损格式版本。如果服务器上不存在对应的 WAV 文件，插件将无法下载，并可能会在状态中显示“错误”或“未找到”。这是正常现象。</span>
+                            <span data-lang="en" class="hidden"><strong>A:</strong> Suno does not generate a lossless WAV version for every song. If the corresponding WAV file does not exist on the server, the extension cannot download it and may show an "Error" or "Not found" status. This is normal.</span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-semibold text-lg">
+                           <span data-lang="zh">Q2: 为什么批量下载没有下载完我的所有歌曲？</span>
+                           <span data-lang="en" class="hidden">Q2: Why didn't the batch download get all of my songs?</span>
+                        </dt>
+                        <dd class="mt-2 ml-4 text-gray-400 leading-relaxed">
+                            <span data-lang="zh"><strong>A:</strong> 批量下载功能仅对 <strong>当前页面上已加载并可见</strong> 的歌曲生效。为了获取完整的列表，请确保您已滚动到列表底部，或在翻页后再次点击批量下载按钮。</span>
+                            <span data-lang="en" class="hidden"><strong>A:</strong> The batch download function only works for songs that are <strong>loaded and visible on the current page</strong>. To get the complete list, please ensure you have scrolled to the bottom of the list or go to the next page and click the batch download button again.</span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-semibold text-lg">
+                           <span data-lang="zh">Q3: 页面上的下载按钮没有出现，我该怎么办？</span>
+                           <span data-lang="en" class="hidden">Q3: The download buttons aren't appearing on the page. What should I do?</span>
+                        </dt>
+                        <dd class="mt-2 ml-4 text-gray-400 leading-relaxed">
+                            <span data-lang="zh"><strong>A:</strong> 请尝试以下步骤：<br>1. <strong>刷新页面</strong>：这是最常见的解决方法。<br>2. <strong>稍等片刻</strong>：网络较慢时，插件可能需要几秒钟来添加按钮。<br>3. 如果问题仍然存在，请尝试禁用其他可能冲突的插件，或通过下方方式联系我们。</span>
+                            <span data-lang="en" class="hidden"><strong>A:</strong> Please try the following steps:<br>1. <strong>Refresh the page</strong>: This is the most common solution.<br>2. <strong>Wait a moment</strong>: On slow connections, the extension might take a few seconds to inject the buttons.<br>3. If the problem persists, try disabling other extensions that might conflict, or contact us using the methods below.</span>
+                        </dd>
+                    </div>
+                </dl>
+            </section>
+            
+            <!-- Section 5: Support & Feedback -->
+            <section id="support">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2">
+                    <span data-lang="zh">5. 支持与反馈</span>
+                    <span data-lang="en" class="hidden">5. Support & Feedback</span>
+                </h2>
+                <div class="space-y-4 text-lg leading-relaxed">
+                    <p>
+                        <span data-lang="zh">我们致力于为您提供最好的体验。如果您在使用过程中遇到任何问题、有功能建议，或发现了任何错误 (Bug)，欢迎通过以下方式联系开发者：</span>
+                        <span data-lang="en" class="hidden">We are committed to providing you with the best experience. If you encounter any issues, have feature suggestions, or find any bugs, please feel free to contact the developer:</span>
+                    </p>
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-6 w-6 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        <strong>X (Twitter)</strong>: <a href="https://x.com/lipeng0820" target="_blank" class="text-blue-400 hover:text-blue-300 underline">@lipeng0820</a>
+                    </p>
+                    <p>
+                        <span data-lang="zh">如果您觉得这款插件对您有帮助，也请不吝在 Chrome 网上应用店给我们一个五星好评！您的支持是我们不断改进的最大动力。</span>
+                        <span data-lang="en" class="hidden">If you find this extension helpful, please consider leaving a five-star review on the Chrome Web Store! Your support is our greatest motivation for continuous improvement.</span>
+                    </p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 pt-12 mt-12 border-t border-gray-800">
+            <p>
+                <span data-lang="zh"><strong>免责声明</strong>: 本插件为第三方开发工具，旨在方便用户备份和下载个人创作或公开的音乐作品。请尊重版权，合理使用本工具。本插件与 Suno, Inc. 官方没有任何关联。</span>
+                <span data-lang="en" class="hidden"><strong>Disclaimer</strong>: This is a third-party tool developed to facilitate the backup and download of personal or publicly available music creations. Please respect copyright and use this tool responsibly. This extension is not officially affiliated with Suno, Inc.</span>
+            </p>
+            <p class="mt-4">&copy; 2024 SimbaLee. Version 1.0</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const langSwitchButtons = document.querySelectorAll('.lang-switch-btn');
+            const allLangElements = document.querySelectorAll('[data-lang]');
+            
+            const switchLanguage = (lang) => {
+                // Set html lang attribute for accessibility
+                document.documentElement.lang = lang;
+
+                // Toggle visibility for all language-specific elements
+                allLangElements.forEach(el => {
+                    if (el.dataset.lang === lang) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                });
+
+                // Update active button style
+                langSwitchButtons.forEach(button => {
+                    if (button.dataset.targetLang === lang) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+
+                // Save preference to localStorage
+                localStorage.setItem('preferredLanguage', lang);
+            };
+
+            // Add click event listeners to buttons
+            langSwitchButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetLang = button.dataset.targetLang;
+                    switchLanguage(targetLang);
+                });
+            });
+
+            // Initialize language on page load
+            const savedLang = localStorage.getItem('preferredLanguage');
+            const browserLang = navigator.language.startsWith('zh') ? 'zh' : 'en';
+            const initialLang = savedLang || browserLang;
+            
+            switchLanguage(initialLang);
+        });
+    </script>
+</body>
+</html>
