@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 绑定暂停/继续按钮事件
   document.getElementById('pauseResumeBtn').addEventListener('click', togglePauseResume);
   
+  // 绑定语言切换按钮事件
+  document.getElementById('languageToggleBtn').addEventListener('click', toggleLanguage);
+  
   // 绑定批量下载按钮事件
   document.getElementById('downloadAllMp3Btn').addEventListener('click', () => {
     // 向当前活动标签页发送消息，触发批量下载
@@ -91,9 +94,21 @@ document.addEventListener('DOMContentLoaded', () => {
       updatePauseResumeButton(true);
     } else if (message.type === 'batchDownloadResumed') {
       updatePauseResumeButton(false);
+    } else if (message.type === 'languageChanged') {
+      updateLanguageUI();
     }
     updateUI();
   });
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', (event) => {
+    updateLanguageUI();
+    updateUIText();
+  });
+  
+  // Initialize language UI
+  updateLanguageUI();
+  updateUIText();
 });
 
 // 加载下载历史
@@ -682,3 +697,128 @@ document.getElementById('downloadAllWavBtn').addEventListener('click', () => {
   });
   updateStatus('正在准备批量下载WAV...');
 });
+
+// Language toggle functionality
+function toggleLanguage() {
+  if (typeof i18n !== 'undefined') {
+    i18n.toggleLanguage();
+  }
+}
+
+// Update language UI elements
+function updateLanguageUI() {
+  if (typeof i18n !== 'undefined') {
+    const languageText = document.getElementById('languageText');
+    const languageToggleBtn = document.getElementById('languageToggleBtn');
+    
+    if (languageText && languageToggleBtn) {
+      const currentLang = i18n.getCurrentLanguage();
+      
+      // Update button text
+      languageText.textContent = currentLang === 'zh' ? '中' : 'EN';
+      
+      // Update button tooltip
+      const tooltipText = currentLang === 'zh' ? 
+        i18n.t('switch.to.english') : 
+        i18n.t('switch.to.chinese');
+      languageToggleBtn.title = tooltipText;
+    }
+  }
+}
+
+// Update interface text elements
+function updateUIText() {
+  if (typeof i18n !== 'undefined') {
+    // Update tab buttons
+    const singleTabBtn = document.getElementById('singleTabBtn');
+    const batchTabBtn = document.getElementById('batchTabBtn');
+    
+    if (singleTabBtn) singleTabBtn.textContent = i18n.t('single.download');
+    if (batchTabBtn) batchTabBtn.textContent = i18n.t('batch.download');
+    
+    // Update delete button
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    if (clearAllBtn) {
+      const svg = clearAllBtn.querySelector('svg');
+      clearAllBtn.innerHTML = '';
+      if (svg) clearAllBtn.appendChild(svg);
+      clearAllBtn.appendChild(document.createTextNode(i18n.t('delete.all')));
+    }
+    
+    // Update batch download buttons
+    const downloadAllMp3Btn = document.getElementById('downloadAllMp3Btn');
+    const downloadAllWavBtn = document.getElementById('downloadAllWavBtn');
+    
+    if (downloadAllMp3Btn) downloadAllMp3Btn.textContent = i18n.t('download.all.mp3');
+    if (downloadAllWavBtn) downloadAllWavBtn.textContent = i18n.t('download.all.wav');
+    
+    // Update pause/resume button
+    const pauseResumeBtn = document.getElementById('pauseResumeBtn');
+    if (pauseResumeBtn) {
+      pauseResumeBtn.textContent = isPaused ? i18n.t('resume') : i18n.t('pause');
+    }
+    
+    // Update clear queue button
+    const batchClearAllBtn = document.getElementById('batchClearAllBtn');
+    if (batchClearAllBtn) batchClearAllBtn.textContent = i18n.t('clear.queue');
+    
+    // Update status bar
+    const statusBar = document.getElementById('statusBar');
+    if (statusBar && statusBar.textContent === '就绪') {
+      statusBar.textContent = i18n.t('ready');
+    }
+    
+    // Update table headers
+    updateTableHeaders();
+    
+    // Update page headers
+    updatePageHeaders();
+  }
+}
+
+// Update table column headers
+function updateTableHeaders() {
+  if (typeof i18n !== 'undefined') {
+    const headers = document.querySelectorAll('th');
+    headers.forEach(header => {
+      const text = header.textContent.trim();
+      if (text === '文件名') header.textContent = i18n.t('filename');
+      else if (text === '大小') header.textContent = i18n.t('size');
+      else if (text === '状态') header.textContent = i18n.t('status');
+      else if (text === '操作') header.textContent = i18n.t('actions');
+    });
+  }
+}
+
+// Update page section headers
+function updatePageHeaders() {
+  if (typeof i18n !== 'undefined') {
+    // Update download progress header
+    const progressSpan = document.querySelector('span[style*="color: #9ca3af"]');
+    if (progressSpan && progressSpan.textContent === '下载进度') {
+      progressSpan.textContent = i18n.t('download.progress');
+    }
+    
+    // Update download list headers
+    const downloadListHeaders = document.querySelectorAll('h2');
+    downloadListHeaders.forEach(header => {
+      const text = header.textContent.trim();
+      if (text === '下载列表') {
+        const svg = header.querySelector('svg');
+        header.innerHTML = '';
+        if (svg) header.appendChild(svg);
+        header.appendChild(document.createTextNode(i18n.t('download.list')));
+      } else if (text === '批量下载当前页面作品') {
+        const svg = header.querySelector('svg');
+        header.innerHTML = '';
+        if (svg) header.appendChild(svg);
+        header.appendChild(document.createTextNode(i18n.t('batch.download.current.page')));
+      } else if (text === '等待下载队列') {
+        const svg = header.querySelector('svg');
+        header.innerHTML = '';
+        if (svg) header.appendChild(svg);
+        header.appendChild(document.createTextNode(i18n.t('download.queue')));
+      }
+    });
+  }
+}
