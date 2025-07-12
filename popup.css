@@ -777,3 +777,17 @@ table {
   margin-bottom: 4px;
   border: 1px solid #374151;
 }
+
+#languageToggleBtn .icon-globe {
+  font-size: 1rem;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+#languageToggleBtn .lang-active {
+  font-weight: bold;
+  color: #f9fafb;
+}
+#languageToggleBtn .lang-inactive {
+  color: #9ca3af;
+  opacity: 0.7;
+}

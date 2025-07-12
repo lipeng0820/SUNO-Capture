@@ -6,6 +6,20 @@ let batchDownloadQueue = [];
 let isBatchDownloading = false;
 let isPaused = false;
 
+// Get localized error message
+function getLocalizedError(key) {
+  // Default fallback messages
+  const fallbackMessages = {
+    'wav.not.found': '该曲目没有找到对应的WAV版本',
+    'file.not.found': '文件不存在',
+    'download.interrupted': '下载中断'
+  };
+  
+  // For now, return the Chinese version as default
+  // In a full implementation, this would check the stored language preference
+  return fallbackMessages[key] || key;
+}
+
 // 初始化
 chrome.runtime.onInstalled.addListener(() => {
   console.log('SUNO Capture 插件已安装');
@@ -101,9 +115,9 @@ function downloadFile(musicUuid, shareId, fileType) {
   }).then(response => {
     if (!response.ok) {
       if (fileType === 'wav') {
-        throw new Error('该曲目没有找到对应的WAV版本');
+        throw new Error(getLocalizedError('wav.not.found'));
       } else {
-        throw new Error('文件不存在');
+        throw new Error(getLocalizedError('file.not.found'));
       }
     }
     
@@ -152,7 +166,7 @@ function monitorDownloadProgress(downloadId, browserDownloadId, fileSize) {
       } else if (item.state === 'complete') {
         completeDownload(downloadId);
       } else if (item.state === 'interrupted') {
-        handleDownloadError(downloadId, '下载中断');
+        handleDownloadError(downloadId, getLocalizedError('download.interrupted'));
       }
     });
   };
@@ -320,9 +334,9 @@ function handleDirectDownload(url, filename) {
   }).then(response => {
     if (!response.ok) {
       if (fileType === 'wav') {
-        throw new Error('该曲目没有找到对应的WAV版本');
+        throw new Error(getLocalizedError('wav.not.found'));
       } else {
-        throw new Error('文件不存在');
+        throw new Error(getLocalizedError('file.not.found'));
       }
     }
     
@@ -353,14 +367,15 @@ function handleDirectDownload(url, filename) {
 }
 
 // 处理批量下载音乐
-function handleBatchDownloadMusic(musicUuids, fileType) {
-  console.log(`开始批量下载: ${fileType} - ${musicUuids.length} 首音乐`);
+function handleBatchDownloadMusic(musicData, fileType) {
+  console.log(`开始批量下载: ${fileType} - ${musicData.length} 首音乐`);
   
-  // 为每个音乐UUID创建下载任务
-  const newQueueItems = musicUuids.map(uuid => {
+  // 为每个音乐数据创建下载任务
+  const newQueueItems = musicData.map(item => {
     return {
       id: 'queue_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-      musicUuid: uuid,
+      musicUuid: item.uuid,
+      songTitle: item.title,
       fileType: fileType,
       status: 'waiting',
       timestamp: Date.now()
@@ -416,9 +431,10 @@ function processBatchDownloadQueue() {
   
   // 创建下载任务
   const musicUuid = nextItem.musicUuid;
+  const songTitle = nextItem.songTitle;
   const fileType = nextItem.fileType;
   const url = `https://cdn1.suno.ai/${musicUuid}.${fileType}`;
-  const filename = `${musicUuid}.${fileType}`;
+  const filename = `${songTitle}.${fileType}`;
   
   console.log(`开始处理批量下载项: ${filename}`);
   
@@ -446,9 +462,9 @@ function processBatchDownloadQueue() {
   }).then(response => {
     if (!response.ok) {
       if (fileType === 'wav') {
-        throw new Error('该曲目没有找到对应的WAV版本');
+        throw new Error(getLocalizedError('wav.not.found'));
       } else {
-        throw new Error('文件不存在');
+        throw new Error(getLocalizedError('file.not.found'));
       }
     }
     
@@ -497,7 +513,7 @@ function monitorBatchDownloadProgress(downloadId, browserDownloadId, fileSize) {
       } else if (item.state === 'complete') {
         completeBatchDownload(downloadId);
       } else if (item.state === 'interrupted') {
-        handleBatchDownloadError(downloadId, '下载中断');
+        handleBatchDownloadError(downloadId, getLocalizedError('download.interrupted'));
       }
     });
   };

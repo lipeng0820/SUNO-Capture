@@ -51,11 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
           type: 'triggerBatchDownload',
           fileType: 'mp3'
         });
-        updateStatus('正在准备批量下载MP3...');
+        updateStatus(formatMessage('preparing.batch.download.mp3'));
         // 设置标志，表示用户已启动批量下载
         chrome.storage.local.set({ lastUsedTab: 'batch' });
       } else {
-        updateStatus('请在SUNO创作列表页面使用批量下载功能');
+        updateStatus(formatMessage('please.use.on.suno.page'));
       }
     });
   });
@@ -68,11 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
           type: 'triggerBatchDownload',
           fileType: 'wav'
         });
-        updateStatus('正在准备批量下载WAV...');
+        updateStatus(formatMessage('preparing.batch.download.wav'));
         // 设置标志，表示用户已启动批量下载
         chrome.storage.local.set({ lastUsedTab: 'batch' });
       } else {
-        updateStatus('请在SUNO创作列表页面使用批量下载功能');
+        updateStatus(formatMessage('please.use.on.suno.page'));
       }
     });
   });
@@ -132,6 +132,18 @@ function loadBatchDownloadQueue() {
   });
 }
 
+// Helper function to format i18n messages with placeholders
+function formatMessage(key, replacements = {}) {
+  if (typeof i18n !== 'undefined') {
+    let message = i18n.t(key);
+    Object.keys(replacements).forEach(placeholder => {
+      message = message.replace(`{${placeholder}}`, replacements[placeholder]);
+    });
+    return message;
+  }
+  return key; // Fallback to key if i18n not available
+}
+
 // 处理下载错误
 function handleDownloadError(downloadId, errorMessage) {
   const download = downloadHistory.find(item => item.id === downloadId);
@@ -140,7 +152,11 @@ function handleDownloadError(downloadId, errorMessage) {
     download.error = errorMessage;
     saveDownloadHistory();
     updateUI();
-    updateStatus(`下载错误: ${download.filename} - ${errorMessage}`);
+    const message = formatMessage('download.error.with.filename', {
+      filename: download.filename,
+      error: errorMessage
+    });
+    updateStatus(message);
   }
 }
 
@@ -159,8 +175,8 @@ function updateUI() {
             <svg xmlns="http://www.w3.org/2000/svg" class="icon-lg mb-2" style="color: #4b5563;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            <span>暂无下载记录</span>
-            <span class="text-xs mt-1 text-gray-600">在 SUNO 音乐页面点击下载按钮开始</span>
+            <span>${typeof i18n !== 'undefined' ? i18n.t('empty.history') : '暂无下载记录'}</span>
+            <span class="text-xs mt-1 text-gray-600">${typeof i18n !== 'undefined' ? i18n.t('empty.history.instruction') : '在 SUNO 音乐页面点击下载按钮开始'}</span>
           </div>
         </td>
       </tr>
@@ -327,7 +343,7 @@ function addNewDownload(downloadId, filename, fileType) {
   
   saveDownloadHistory();
   updateUI();
-  updateStatus(`开始下载: ${filename}`);
+  updateStatus(formatMessage('download.started.with.filename', { filename }));
 }
 
 // 更新下载进度
@@ -338,7 +354,10 @@ function updateDownloadProgress(downloadId, progress, fileSize) {
     download.fileSize = fileSize;
     saveDownloadHistory();
     updateUI();
-    updateStatus(`下载中: ${download.filename} (${progress}%)`);
+    updateStatus(formatMessage('downloading.with.progress', { 
+      filename: download.filename, 
+      progress 
+    }));
   }
 }
 
@@ -351,7 +370,7 @@ function completeDownload(downloadId) {
     delete activeDownloads[downloadId];
     saveDownloadHistory();
     updateUI();
-    updateStatus(`下载完成: ${download.filename}`);
+    updateStatus(formatMessage('download.completed.with.filename', { filename: download.filename }));
   }
 }
 
@@ -368,7 +387,7 @@ function cancelDownload(downloadId) {
     delete activeDownloads[downloadId];
     saveDownloadHistory();
     updateUI();
-    updateStatus(`已取消下载: ${download.filename}`);
+    updateStatus(formatMessage('download.canceled.with.filename', { filename: download.filename }));
   }
 }
 
@@ -377,7 +396,7 @@ function deleteDownload(downloadId) {
   downloadHistory = downloadHistory.filter(item => item.id !== downloadId);
   saveDownloadHistory();
   updateUI();
-  updateStatus('已删除下载记录');
+  updateStatus(formatMessage('download.record.deleted'));
 }
 
 // 清除所有历史记录
@@ -394,7 +413,7 @@ function clearAllHistory() {
   activeDownloads = {};
   saveDownloadHistory();
   updateUI();
-  updateStatus('已清除所有下载记录');
+  updateStatus(formatMessage('all.download.records.cleared'));
 }
 
 // 保存下载历史到本地存储
@@ -428,13 +447,25 @@ function formatFileSize(bytes) {
 
 // 获取状态文本
 function getStatusText(status) {
-  switch(status) {
-    case 'loading': return '加载中';
-    case 'downloading': return '下载中';
-    case 'completed': return '已完成';
-    case 'error': return '错误';
-    case 'canceled': return '已取消';
-    default: return status;
+  if (typeof i18n !== 'undefined') {
+    switch(status) {
+      case 'loading': return i18n.t('loading');
+      case 'downloading': return i18n.t('downloading');
+      case 'completed': return i18n.t('completed');
+      case 'error': return i18n.t('error');
+      case 'canceled': return i18n.t('canceled');
+      default: return status;
+    }
+  } else {
+    // Fallback to Chinese if i18n not available
+    switch(status) {
+      case 'loading': return '加载中';
+      case 'downloading': return '下载中';
+      case 'completed': return '已完成';
+      case 'error': return '错误';
+      case 'canceled': return '已取消';
+      default: return status;
+    }
   }
 }
 
@@ -486,8 +517,8 @@ function updateBatchQueueUI() {
             <svg xmlns="http://www.w3.org/2000/svg" class="icon-lg mb-2" style="color: #4b5563;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            <span>暂无下载队列</span>
-            <span class="mt-1" style="font-size: 0.75rem; color: #4b5563;">点击"下载所有MP3"或"下载所有WAV"按钮开始</span>
+            <span>${typeof i18n !== 'undefined' ? i18n.t('empty.queue') : '暂无下载队列'}</span>
+            <span class="mt-1" style="font-size: 0.75rem; color: #4b5563;">${typeof i18n !== 'undefined' ? i18n.t('empty.queue.instruction') : '点击"下载所有MP3"或"下载所有WAV"按钮开始'}</span>
           </div>
         </td>
       </tr>
@@ -506,14 +537,19 @@ function updateBatchQueueUI() {
     // 状态样式
     let statusHTML = '';
     let statusClass = '';
-    
+    let waitingText = typeof i18n !== 'undefined' ? i18n.t('queue.waiting') : '等待中';
+    let processingText = typeof i18n !== 'undefined' ? i18n.t('queue.processing') : '处理中';
+    let completedText = typeof i18n !== 'undefined' ? i18n.t('queue.completed') : '已完成';
+    let errorText = typeof i18n !== 'undefined' ? i18n.t('queue.error') : '错误';
+    let notFoundText = typeof i18n !== 'undefined' ? i18n.t('queue.notfound') : '未找到';
+
     if (item.status === 'waiting') {
       statusHTML = `
         <div class="flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" style="color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span>等待中</span>
+          <span>${waitingText}</span>
         </div>
       `;
       statusClass = 'text-gray-400';
@@ -523,7 +559,7 @@ function updateBatchQueueUI() {
           <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1 animate-spin" style="color: #60a5fa;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <span>处理中</span>
+          <span>${processingText}</span>
         </div>
       `;
       statusClass = 'text-blue-400';
@@ -533,46 +569,40 @@ function updateBatchQueueUI() {
           <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" style="color: #34d399;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
-          <span>已完成</span>
+          <span>${completedText}</span>
         </div>
       `;
       statusClass = 'text-green-400';
     } else if (item.status === 'error') {
       // 检查是否是WAV版本不存在的错误
-      let errorText = '错误';
+      let errorDisplayText = errorText;
       if (item.error && item.error.includes('没有找到对应的WAV版本')) {
-        errorText = '未找到';
+        errorDisplayText = notFoundText;
       }
-      
       statusHTML = `
-        <div class="flex items-center" title="${item.error || '下载失败'}">
+        <div class="flex items-center" title="${item.error || (typeof i18n !== 'undefined' ? i18n.t('download.failed') : '下载失败')}">
           <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" style="color: #f87171;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span>${errorText}</span>
+          <span>${errorDisplayText}</span>
         </div>
       `;
       statusClass = 'text-red-400';
     }
-    
     // 文件类型标签样式
     const fileTagBg = item.fileType === 'mp3' ? '#1e40af' : '#6d28d9';
     const fileTagColor = 'white';
-    
     // 创建行元素
     const row = document.createElement('tr');
     row.className = 'border-t border-gray-700';
-    
     // 设置删除按钮状态 - 已完成项目禁用删除按钮
     const isCompleted = item.status === 'completed';
     const btnClass = isCompleted ? 'btn btn-gray btn-icon' : 'btn btn-red btn-icon';
-    
     // 文件大小显示
     let fileSizeDisplay = '-';
     if (item.error && item.error.includes('没有找到对应的WAV版本')) {
       fileSizeDisplay = '0 KB';
     }
-    
     row.innerHTML = `
       <td class="px-3 py-2">
         <div class="flex items-center">
@@ -594,10 +624,8 @@ function updateBatchQueueUI() {
         </button>
       </td>
     `;
-    
     batchDownloadList.appendChild(row);
   });
-  
   // 绑定删除按钮事件
   document.querySelectorAll('.batch-delete-btn').forEach(btn => {
     if (!btn.disabled) {
@@ -628,10 +656,10 @@ function updatePauseResumeButton(paused) {
   const pauseResumeBtn = document.getElementById('pauseResumeBtn');
   
   if (paused) {
-    pauseResumeBtn.textContent = '继续';
+    pauseResumeBtn.textContent = typeof i18n !== 'undefined' ? i18n.t('resume') : '继续';
     pauseResumeBtn.className = 'btn btn-green';
   } else {
-    pauseResumeBtn.textContent = '暂停';
+    pauseResumeBtn.textContent = typeof i18n !== 'undefined' ? i18n.t('pause') : '暂停';
     pauseResumeBtn.className = 'btn btn-gray';
   }
 }
@@ -641,7 +669,7 @@ function clearBatchQueue() {
   chrome.runtime.sendMessage({
     type: 'clearBatchDownloadQueue'
   });
-  updateStatus('已清空批量下载队列');
+  updateStatus(formatMessage('batch.queue.cleared'));
 }
 
 // 从批量下载队列中移除项目
@@ -650,7 +678,7 @@ function removeBatchQueueItem(queueItemId) {
     type: 'removeBatchDownloadItem',
     queueItemId: queueItemId
   });
-  updateStatus('已从队列中移除项目');
+  updateStatus(formatMessage('item.removed.from.queue'));
 }
 
 // 添加全局函数，使按钮点击事件可以在HTML中调用
@@ -667,16 +695,16 @@ function sendMessageToActiveTab(message) {
             console.log('发送消息时出错:', chrome.runtime.lastError.message);
             // 如果是连接问题，显示友好的错误消息
             if (chrome.runtime.lastError.message.includes('Could not establish connection')) {
-              updateStatus('无法连接到SUNO页面，请刷新页面后重试');
+              updateStatus(formatMessage('cannot.connect.to.suno'));
             }
           }
         });
       } catch (error) {
         console.error('发送消息失败:', error);
-        updateStatus('发送消息失败，请刷新页面后重试');
+        updateStatus(formatMessage('message.send.failed'));
       }
     } else {
-      updateStatus('请在SUNO网站上使用此功能');
+      updateStatus(formatMessage('please.use.on.suno.website'));
     }
   });
 }
@@ -687,7 +715,7 @@ document.getElementById('downloadAllMp3Btn').addEventListener('click', () => {
     type: 'triggerBatchDownload',
     fileType: 'mp3'
   });
-  updateStatus('正在准备批量下载MP3...');
+  updateStatus(formatMessage('preparing.batch.download.mp3'));
 });
 
 document.getElementById('downloadAllWavBtn').addEventListener('click', () => {
@@ -695,13 +723,19 @@ document.getElementById('downloadAllWavBtn').addEventListener('click', () => {
     type: 'triggerBatchDownload',
     fileType: 'wav'
   });
-  updateStatus('正在准备批量下载WAV...');
+  updateStatus(formatMessage('preparing.batch.download.wav'));
 });
 
 // Language toggle functionality
 function toggleLanguage() {
   if (typeof i18n !== 'undefined') {
     i18n.toggleLanguage();
+    // Notify content script that language has changed
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'languageChanged' });
+      }
+    });
   }
 }
 
@@ -713,15 +747,17 @@ function updateLanguageUI() {
     
     if (languageText && languageToggleBtn) {
       const currentLang = i18n.getCurrentLanguage();
-      
-      // Update button text
-      languageText.textContent = currentLang === 'zh' ? '中' : 'EN';
-      
+      // Show both codes, highlight the active one
+      if (currentLang === 'zh') {
+        languageText.innerHTML = '<span class="lang-inactive">EN</span> | <span class="lang-active">中</span>';
+      } else {
+        languageText.innerHTML = '<span class="lang-active">EN</span> | <span class="lang-inactive">中</span>';
+      }
       // Update button tooltip
       const tooltipText = currentLang === 'zh' ? 
         i18n.t('switch.to.english') : 
         i18n.t('switch.to.chinese');
-      languageToggleBtn.title = tooltipText;
+      languageToggleBtn.title = tooltipText + ' / Switch Language';
     }
   }
 }

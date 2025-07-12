@@ -118,14 +118,32 @@ function downloadDirectly(musicUuid, type) {
   const url = `https://cdn1.suno.ai/${musicUuid}.${type}`;
   console.log(`SUNO Capture: 准备直接下载 ${type} 文件: ${url}`);
   
-  // 显示下载开始的提示
-  showDownloadToast(`开始下载 ${type.toUpperCase()} 音频`);
+  // Get language-specific message
+  getDownloadMessage(type).then(message => {
+    showDownloadToast(message);
+  });
   
   // 使用chrome.downloads API下载文件
   chrome.runtime.sendMessage({
     type: 'downloadDirectly',
     url: url,
     filename: `${musicUuid}.${type}`
+  });
+}
+
+// Get localized download message
+function getDownloadMessage(type) {
+  return new Promise((resolve) => {
+    // Get current language from storage
+    chrome.storage.local.get(['language'], (result) => {
+      const language = result.language || 'zh';
+      
+      if (language === 'en') {
+        resolve(`Download started: ${type.toUpperCase()} audio`);
+      } else {
+        resolve(`开始下载 ${type.toUpperCase()} 音频`);
+      }
+    });
   });
 }
 
@@ -163,135 +181,167 @@ function showDownloadToast(message) {
 // 监听来自popup.js的消息
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'downloadComplete') {
-    showDownloadToast(`下载完成！`);
+    getLocalizedMessage('download.completed').then(completeMessage => {
+      showDownloadToast(completeMessage);
+    });
   } else if (message.type === 'downloadError') {
-    showDownloadToast(`下载失败: ${message.error}`);
+    getLocalizedMessage('download.error').then(errorMessage => {
+      showDownloadToast(errorMessage + ': ' + message.error);
+    });
   } else if (message.type === 'triggerBatchDownload') {
     console.log(`SUNO Capture: 收到批量下载请求，类型: ${message.fileType}`);
     batchDownloadMusic(message.fileType);
   }
 });
 
+// Get localized message based on current language
+function getLocalizedMessage(key) {
+  return new Promise((resolve) => {
+    // Get current language from storage
+    chrome.storage.local.get(['language'], (result) => {
+      const language = result.language || 'zh';
+      
+      const messages = {
+        zh: {
+          'download.completed': '下载完成！',
+          'download.error': '下载失败'
+        },
+        en: {
+          'download.completed': 'Download completed!',
+          'download.error': 'Download failed'
+        }
+      };
+      
+      const message = messages[language]?.[key] || messages.zh[key] || key;
+      resolve(message);
+    });
+  });
+}
+
 // 添加批量下载按钮
 function addBatchDownloadButtons() {
   console.log('SUNO Capture: 开始添加批量下载按钮');
-  
+
   // 移除已存在的批量下载按钮（如果有）
   const existingButtons = document.querySelector('.suno-capture-batch-buttons');
   if (existingButtons) {
     existingButtons.remove();
   }
-  
-  // 创建批量下载按钮容器
-  const batchContainer = document.createElement('div');
-  batchContainer.className = 'suno-capture-batch-buttons';
-  batchContainer.style.position = 'fixed';
-  batchContainer.style.bottom = '20px';
-  batchContainer.style.right = '20px';
-  batchContainer.style.zIndex = '9999';
-  batchContainer.style.display = 'flex';
-  batchContainer.style.flexDirection = 'column';
-  batchContainer.style.gap = '8px';
-  
-  // 创建批量下载MP3按钮
-  const batchMp3Button = document.createElement('button');
-  batchMp3Button.className = 'batch-mp3-btn';
-  batchMp3Button.style.backgroundColor = '#2563eb';
-  batchMp3Button.style.color = 'white';
-  batchMp3Button.style.padding = '8px 12px';
-  batchMp3Button.style.borderRadius = '4px';
-  batchMp3Button.style.border = 'none';
-  batchMp3Button.style.cursor = 'pointer';
-  batchMp3Button.style.display = 'flex';
-  batchMp3Button.style.alignItems = 'center';
-  batchMp3Button.style.justifyContent = 'center';
-  batchMp3Button.style.gap = '4px';
-  batchMp3Button.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
-  batchMp3Button.style.transition = 'all 0.2s ease';
-  batchMp3Button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>批量下载MP3';
-  
-  // 创建批量下载WAV按钮
-  const batchWavButton = document.createElement('button');
-  batchWavButton.className = 'batch-wav-btn';
-  batchWavButton.style.backgroundColor = '#7c3aed';
-  batchWavButton.style.color = 'white';
-  batchWavButton.style.padding = '8px 12px';
-  batchWavButton.style.borderRadius = '4px';
-  batchWavButton.style.border = 'none';
-  batchWavButton.style.cursor = 'pointer';
-  batchWavButton.style.display = 'flex';
-  batchWavButton.style.alignItems = 'center';
-  batchWavButton.style.justifyContent = 'center';
-  batchWavButton.style.gap = '4px';
-  batchWavButton.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
-  batchWavButton.style.transition = 'all 0.2s ease';
-  batchWavButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>批量下载WAV';
-  
-  // 添加按钮到容器
-  batchContainer.appendChild(batchMp3Button);
-  batchContainer.appendChild(batchWavButton);
-  
-  // 添加容器到页面
-  document.body.appendChild(batchContainer);
-  
-  // 添加悬停效果
-  batchMp3Button.addEventListener('mouseover', function() {
-    this.style.backgroundColor = '#1d4ed8'; // 深蓝色
-    this.style.transform = 'translateY(-2px)';
-    this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
+
+  // 获取当前语言并设置按钮文本
+  chrome.storage.local.get(['language'], (result) => {
+    const language = result.language || 'zh';
+    let mp3Text = language === 'en' ? 'Download All MP3' : '批量下载MP3';
+    let wavText = language === 'en' ? 'Download All WAV' : '批量下载WAV';
+
+    // 创建批量下载按钮容器
+    const batchContainer = document.createElement('div');
+    batchContainer.className = 'suno-capture-batch-buttons';
+    batchContainer.style.position = 'fixed';
+    batchContainer.style.bottom = '20px';
+    batchContainer.style.right = '20px';
+    batchContainer.style.zIndex = '9999';
+    batchContainer.style.display = 'flex';
+    batchContainer.style.flexDirection = 'column';
+    batchContainer.style.gap = '8px';
+
+    // 创建批量下载MP3按钮
+    const batchMp3Button = document.createElement('button');
+    batchMp3Button.className = 'batch-mp3-btn';
+    batchMp3Button.style.backgroundColor = '#2563eb';
+    batchMp3Button.style.color = 'white';
+    batchMp3Button.style.padding = '8px 12px';
+    batchMp3Button.style.borderRadius = '4px';
+    batchMp3Button.style.border = 'none';
+    batchMp3Button.style.cursor = 'pointer';
+    batchMp3Button.style.display = 'flex';
+    batchMp3Button.style.alignItems = 'center';
+    batchMp3Button.style.justifyContent = 'center';
+    batchMp3Button.style.gap = '4px';
+    batchMp3Button.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+    batchMp3Button.style.transition = 'all 0.2s ease';
+    batchMp3Button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>' + mp3Text;
+
+    // 创建批量下载WAV按钮
+    const batchWavButton = document.createElement('button');
+    batchWavButton.className = 'batch-wav-btn';
+    batchWavButton.style.backgroundColor = '#7c3aed';
+    batchWavButton.style.color = 'white';
+    batchWavButton.style.padding = '8px 12px';
+    batchWavButton.style.borderRadius = '4px';
+    batchWavButton.style.border = 'none';
+    batchWavButton.style.cursor = 'pointer';
+    batchWavButton.style.display = 'flex';
+    batchWavButton.style.alignItems = 'center';
+    batchWavButton.style.justifyContent = 'center';
+    batchWavButton.style.gap = '4px';
+    batchWavButton.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+    batchWavButton.style.transition = 'all 0.2s ease';
+    batchWavButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>' + wavText;
+
+    // 添加按钮到容器
+    batchContainer.appendChild(batchMp3Button);
+    batchContainer.appendChild(batchWavButton);
+
+    // 添加容器到页面
+    document.body.appendChild(batchContainer);
+
+    // 添加悬停和点击效果（原样保留）
+    batchMp3Button.addEventListener('mouseover', function() {
+      this.style.backgroundColor = '#1d4ed8';
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
+    });
+    batchMp3Button.addEventListener('mouseout', function() {
+      this.style.backgroundColor = '#2563eb';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+    });
+    batchWavButton.addEventListener('mouseover', function() {
+      this.style.backgroundColor = '#6d28d9';
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
+    });
+    batchWavButton.addEventListener('mouseout', function() {
+      this.style.backgroundColor = '#7c3aed';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+    });
+    batchMp3Button.addEventListener('mousedown', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 3px rgba(0, 0, 0, 0.2)';
+    });
+    batchMp3Button.addEventListener('mouseup', function() {
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
+    });
+    batchWavButton.addEventListener('mousedown', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 3px rgba(0, 0, 0, 0.2)';
+    });
+    batchWavButton.addEventListener('mouseup', function() {
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
+    });
+    batchMp3Button.addEventListener('click', function() {
+      console.log('SUNO Capture: 批量下载MP3按钮被点击');
+      batchDownloadMusic('mp3');
+    });
+    batchWavButton.addEventListener('click', function() {
+      console.log('SUNO Capture: 批量下载WAV按钮被点击');
+      batchDownloadMusic('wav');
+    });
+    console.log('SUNO Capture: 批量下载按钮已添加');
   });
-  
-  batchMp3Button.addEventListener('mouseout', function() {
-    this.style.backgroundColor = '#2563eb'; // 恢复原来的蓝色
-    this.style.transform = 'translateY(0)';
-    this.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+}
+
+// Listen for language change and update batch buttons
+if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'languageChanged') {
+      setTimeout(addBatchDownloadButtons, 100); // Re-render batch buttons
+    }
   });
-  
-  batchWavButton.addEventListener('mouseover', function() {
-    this.style.backgroundColor = '#6d28d9'; // 深紫色
-    this.style.transform = 'translateY(-2px)';
-    this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
-  });
-  
-  batchWavButton.addEventListener('mouseout', function() {
-    this.style.backgroundColor = '#7c3aed'; // 恢复原来的紫色
-    this.style.transform = 'translateY(0)';
-    this.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
-  });
-  
-  // 添加点击效果
-  batchMp3Button.addEventListener('mousedown', function() {
-    this.style.transform = 'translateY(0)';
-    this.style.boxShadow = '0 2px 3px rgba(0, 0, 0, 0.2)';
-  });
-  
-  batchMp3Button.addEventListener('mouseup', function() {
-    this.style.transform = 'translateY(-2px)';
-    this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
-  });
-  
-  batchWavButton.addEventListener('mousedown', function() {
-    this.style.transform = 'translateY(0)';
-    this.style.boxShadow = '0 2px 3px rgba(0, 0, 0, 0.2)';
-  });
-  
-  batchWavButton.addEventListener('mouseup', function() {
-    this.style.transform = 'translateY(-2px)';
-    this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
-  });
-  
-  // 添加事件监听器
-  batchMp3Button.addEventListener('click', function() {
-    console.log('SUNO Capture: 批量下载MP3按钮被点击');
-    batchDownloadMusic('mp3');
-  });
-  
-  batchWavButton.addEventListener('click', function() {
-    console.log('SUNO Capture: 批量下载WAV按钮被点击');
-    batchDownloadMusic('wav');
-  });
-  
-  console.log('SUNO Capture: 批量下载按钮已添加');
 }
 
 // 批量下载音乐
@@ -329,7 +379,8 @@ function batchDownloadMusic(fileType) {
   }
   
   if (musicItems.length === 0) {
-    showDownloadToast('未找到可下载的音乐');
+    const message = typeof i18n !== 'undefined' ? i18n.t('no.music.found') : 'No downloadable music found';
+    showDownloadToast(message);
     console.error('SUNO Capture: 未找到可下载的音乐项');
     return;
   }
@@ -374,12 +425,16 @@ function batchDownloadMusic(fileType) {
   });
   
   if (musicUuids.length === 0) {
-    showDownloadToast('无法提取音乐ID');
+    const message = typeof i18n !== 'undefined' ? i18n.t('cannot.extract.music.id') : 'Cannot extract music ID';
+    showDownloadToast(message);
     console.error('SUNO Capture: 无法提取音乐ID');
     return;
   }
   
-  showDownloadToast(`已添加 ${musicUuids.length} 首音乐到下载队列`);
+  const message = typeof i18n !== 'undefined' ? 
+    i18n.t('added.to.download.queue').replace('{count}', musicUuids.length) : 
+    `Added ${musicUuids.length} songs to download queue`;
+  showDownloadToast(message);
   
   // 设置一个标志，表示用户已启动批量下载
   chrome.storage.local.set({ lastUsedTab: 'batch' });

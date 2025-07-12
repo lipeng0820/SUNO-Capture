@@ -15,22 +15,22 @@
     
     <!-- 标签页切换按钮和全部删除按钮 -->
     <div class="flex items-center">
-      <button id="singleTabBtn" class="tab-btn">单作品下载</button>
-      <button id="batchTabBtn" class="tab-btn">批量下载</button>
+      <button id="singleTabBtn" class="tab-btn"></button>
+      <button id="batchTabBtn" class="tab-btn"></button>
       
       <!-- 添加间隔 -->
       <div style="width: 16px;"></div>
       
       <!-- Language toggle button -->
       <button id="languageToggleBtn" class="btn btn-gray btn-sm flex items-center mr-2" title="切换语言 / Switch Language">
-        <span id="languageText" style="font-size: 0.75rem;">中</span>
+        <span class="icon-globe" style="font-size: 1rem; margin-right: 4px;">🌐</span>
+        <span id="languageText" style="font-size: 0.75rem;"></span>
       </button>
       
       <button id="clearAllBtn" class="btn btn-gray btn-sm flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
-        全部删除
       </button>
     </div>
   </header>
@@ -42,7 +42,7 @@
     <div id="singleDownloadTab">
       <div class="mb-3 p-3 shadow-inner rounded-lg" style="background-color: #1f2937; width: 100%;">
         <div class="flex justify-between mb-1" style="font-size: 0.75rem;">
-          <span style="color: #9ca3af;">下载进度</span>
+          <span style="color: #9ca3af;"></span>
           <span style="color: #60a5fa; font-weight: 500;"><span id="downloadedSize">0 KB</span> / <span id="totalSize">0 KB</span></span>
         </div>
         <div class="w-full h-2 overflow-hidden rounded-full" style="background-color: #374151;">
@@ -55,16 +55,15 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" style="color: #60a5fa;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          下载列表
         </h2>
         <div class="overflow-y-auto" style="max-height: 350px; width: 100%;">
           <table class="w-full">
             <thead class="sticky-header" style="background-color: #374151;">
               <tr class="text-left" style="font-size: 0.75rem; color: #9ca3af;">
-                <th class="px-3 py-2 col-filename">文件名</th>
-                <th class="px-2 py-2 col-size">大小</th>
-                <th class="px-2 py-2 col-status">状态</th>
-                <th class="px-2 py-2 col-action text-center">操作</th>
+                <th class="px-3 py-2 col-filename"></th>
+                <th class="px-2 py-2 col-size"></th>
+                <th class="px-2 py-2 col-status"></th>
+                <th class="px-2 py-2 col-action text-center"></th>
               </tr>
             </thead>
             <tbody id="downloadList" style="border-top-style: solid; border-top-width: 1px; border-color: #374151;">
@@ -82,15 +81,10 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" style="color: #60a5fa;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          批量下载当前页面作品
         </h2>
         <div class="flex space-x-2 mt-2">
-          <button id="downloadAllMp3Btn" class="btn btn-blue flex-1">
-            下载所有MP3
-          </button>
-          <button id="downloadAllWavBtn" class="btn btn-purple flex-1">
-            下载所有WAV
-          </button>
+          <button id="downloadAllMp3Btn" class="btn btn-blue flex-1"></button>
+          <button id="downloadAllWavBtn" class="btn btn-purple flex-1"></button>
         </div>
       </div>
       
@@ -100,25 +94,20 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" style="color: #60a5fa;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            等待下载队列
           </h2>
           <div class="flex space-x-3">
-            <button id="pauseResumeBtn" class="btn btn-gray">
-              暂停
-            </button>
-            <button id="batchClearAllBtn" class="btn btn-gray btn-sm">
-              清空队列
-            </button>
+            <button id="pauseResumeBtn" class="btn btn-gray"></button>
+            <button id="batchClearAllBtn" class="btn btn-gray btn-sm"></button>
           </div>
         </div>
         <div class="overflow-y-auto" style="max-height: 350px; width: 100%;">
           <table class="w-full">
             <thead class="sticky-header" style="background-color: #374151;">
               <tr class="text-left" style="font-size: 0.75rem; color: #9ca3af;">
-                <th class="px-3 py-2 col-filename">文件名</th>
-                <th class="px-2 py-2 col-size">大小</th>
-                <th class="px-2 py-2 col-status">状态</th>
-                <th class="px-2 py-2 col-action text-center">操作</th>
+                <th class="px-3 py-2 col-filename"></th>
+                <th class="px-2 py-2 col-size"></th>
+                <th class="px-2 py-2 col-status"></th>
+                <th class="px-2 py-2 col-action text-center"></th>
               </tr>
             </thead>
             <tbody id="batchDownloadList" style="border-top-style: solid; border-top-width: 1px; border-color: #374151;">
@@ -135,7 +124,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm mr-1" style="color: #60a5fa;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <div id="statusBar" class="status-bar" style="color: #9ca3af;">就绪</div>
+      <div id="statusBar" class="status-bar" style="color: #9ca3af;"></div>
     </div>
     <div class="flex items-center">
       <a href="https://x.com/lipeng0820" target="_blank" class="copyright-link mr-2" style="font-size: 0.75rem; color: #6b7280; text-decoration: none; display: flex; align-items: center;">
